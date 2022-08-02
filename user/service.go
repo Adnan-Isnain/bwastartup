@@ -1,6 +1,5 @@
 package user
 
-<<<<<<< HEAD
 import (
 	"errors"
 
@@ -10,12 +9,6 @@ import (
 type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error)
 	Login(input LoginInput) (User, error)
-=======
-import "golang.org/x/crypto/bcrypt"
-
-type Service interface {
-	RegisterUser(input RegisterUserInput) (User, error)
->>>>>>> a898100e3f8bb92bcb65140d46c0a4a476df9d38
 }
 
 type service struct {
