@@ -23,7 +23,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// Repository
 	userRepository := user.NewRepository(db)
+
+	// Service
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	// Testing service here (using user service)!
