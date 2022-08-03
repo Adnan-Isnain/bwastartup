@@ -114,12 +114,7 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 }
 
 func (h *userHandler) UploadAvatar(c *gin.Context) {
-	// input -> form body
-	// simpan gambar di folder "images/"
-	// call repo -> find user upload
-	// JWT (sementara hardcode -> seakan-akan user yang login ID = 1)
-	// Repo update data user simpan lokasi file
-
+	// Get images from form by name "avatar"
 	file, err := c.FormFile("avatar")
 	if err != nil {
 		data := gin.H{
@@ -130,8 +125,11 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	}
 
 	// GET FROM JWT
-	userId := 1
+	currentUser := c.MustGet("currentUser").(user.User)
+	userId := currentUser.ID
 	path := fmt.Sprintf("images/%d-%s", userId, file.Filename)
+
+	// Saved image in images/ using gin
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
 		data := gin.H{
@@ -141,6 +139,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 	}
 
+	// Save avatar name on database, based on user ID
 	_, err = h.userService.SaveAvatar(userId, path)
 	if err != nil {
 		data := gin.H{
