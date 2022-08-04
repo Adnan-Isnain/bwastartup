@@ -28,12 +28,15 @@ func main() {
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
 
+	// Testing repository here
+
 	// Service
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
-
 	campaignService := campaign.NewService(campaignRepository)
+
 	// Testing service here (using user service)!
+	// Testing Input (If any)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
@@ -48,6 +51,7 @@ func main() {
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaign/:id", campaignHandler.GetCampaign)
+	api.POST("campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	router.Run()
 }
 

@@ -11,11 +11,11 @@ type CampaignFormatter struct {
 	ShortDescription string `json:"short_description"`
 	ImageURL         string `json:"image_url"`
 	Slug             string `json:"slug"`
-	GoalAmout        int    `json:"goal_amount"`
+	GoalAmount       int    `json:"goal_amount"`
 	CurrentAmount    int    `json:"current_amount"`
 }
 
-func formatCampaign(campaign Campaign) CampaignFormatter {
+func FormatCampaign(campaign Campaign) CampaignFormatter {
 	campaignFormatter := CampaignFormatter{
 		ID:               campaign.ID,
 		UserId:           campaign.UserID,
@@ -23,7 +23,7 @@ func formatCampaign(campaign Campaign) CampaignFormatter {
 		ShortDescription: campaign.ShortDescription,
 		ImageURL:         "",
 		Slug:             campaign.Slug,
-		GoalAmout:        campaign.GoalAmout,
+		GoalAmount:       campaign.GoalAmount,
 		CurrentAmount:    campaign.CurrentAmount,
 	}
 
@@ -36,7 +36,7 @@ func formatCampaign(campaign Campaign) CampaignFormatter {
 func FormatCampaigns(campaigns []Campaign) []CampaignFormatter {
 	allCampaigns := []CampaignFormatter{}
 	for _, campaign := range campaigns {
-		allCampaigns = append(allCampaigns, formatCampaign(campaign))
+		allCampaigns = append(allCampaigns, FormatCampaign(campaign))
 	}
 
 	return allCampaigns
@@ -48,7 +48,7 @@ type CampaignDetailFormatter struct {
 	ShortDescription string                   `json:"short_description"`
 	Description      string                   `json:"description"`
 	ImageURL         string                   `json:"image_url"`
-	GoalAmout        int                      `json:"goal_amount"`
+	GoalAmount       int                      `json:"goal_amount"`
 	CurrentAmount    int                      `json:"current_amount"`
 	UserID           int                      `json:"user_id"`
 	Slug             string                   `json:"slug"`
@@ -74,7 +74,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 		ShortDescription: campaign.ShortDescription,
 		Description:      campaign.Description,
 		ImageURL:         "",
-		GoalAmout:        campaign.GoalAmout,
+		GoalAmount:       campaign.GoalAmount,
 		CurrentAmount:    campaign.CurrentAmount,
 		UserID:           campaign.UserID,
 		Slug:             campaign.Slug,
