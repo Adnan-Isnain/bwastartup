@@ -1,6 +1,8 @@
 package campaign
 
 import (
+	"bwastartup/user"
+	"errors"
 	"fmt"
 
 	"github.com/gosimple/slug"
@@ -10,6 +12,7 @@ type Service interface {
 	GetCampaigns(UserId int) ([]Campaign, error)
 	GetcampaignByID(input GetCampaignDetailInput) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
+	UpdateCampaign(inputID GetCampaignDetailInput, inputData CreateCampaignInput) (Campaign, error)
 }
 
 type service struct {
@@ -64,4 +67,34 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 	}
 
 	return newCampaign, nil
+}
+
+func (s *service) UpdateCampaign(inputID GetCampaignDetailInput, inputData CreateCampaignInput) (Campaign, error) {
+	//  Find data on DB
+	myCampaign, err := s.repository.FindByCampaignID(inputID.ID)
+
+	if err != nil {
+		return myCampaign, err
+	}
+
+	// Checking owner of the campaign
+	if myCampaign.UserID != inputData.User.ID {
+		return myCampaign, errors.New("not an owner of the campaign")
+	}
+
+	// After get data, edit, then updated to repository
+	myCampaign.Name = inputData.Name
+	myCampaign.ShortDescription = inputData.ShortDescription
+	myCampaign.Description = inputData.Description
+	myCampaign.Perks = inputData.Perks
+	myCampaign.GoalAmount = inputData.GoalAmount
+
+	// Setting user to default to prevent error from postgres
+	myCampaign.User = user.User{}
+	updCampaign, err := s.repository.UpdateCampaign(myCampaign)
+	if err != nil {
+		return updCampaign, err
+	}
+
+	return updCampaign, nil
 }

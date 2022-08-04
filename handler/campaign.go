@@ -64,6 +64,7 @@ func (h *campaignHandler) GetCampaign(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// routes : POST api/v1/campaigns/
 func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	// Get parameter body to input struct
 	// Call service (input: body) + take currentUser (JWT)
@@ -92,5 +93,42 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	}
 
 	response := helper.APIResponse("Success to create campaign", http.StatusOK, "success", campaign.FormatCampaign(newCampaign))
+	c.JSON(http.StatusOK, response)
+}
+
+// routes : PUT api/v1/campaign/campaign_id
+func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
+	// Get campaign id from route
+	var inputID campaign.GetCampaignDetailInput
+	err := c.ShouldBindUri(&inputID)
+	if err != nil {
+		response := helper.APIResponse("Failed to update campaign", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Get data from body then mapping to input struct
+	var inputData campaign.CreateCampaignInput
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to update campaign", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	inputData.User = currentUser
+
+	// Call to service
+	updCampaign, err := h.service.UpdateCampaign(inputID, inputData)
+	if err != nil {
+		response := helper.APIResponse("Failed to update campaign", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to update campaign", http.StatusOK, "success", campaign.FormatCampaign(updCampaign))
 	c.JSON(http.StatusOK, response)
 }
